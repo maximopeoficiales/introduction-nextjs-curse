@@ -5,7 +5,7 @@ import styles from "../../styles/Blog.module.css";
 interface MyProps {
   name: string;
 }
-export default function Blog(props: MyProps) {
+const Blog = (props: MyProps) => {
   const { name } = props;
   // console.log(props);
   return (
@@ -21,7 +21,7 @@ export default function Blog(props: MyProps) {
       <h2>{name}</h2>
     </div>
   );
-}
+};
 
 // esta funciona se ejecuta en el servidor y se lo envia al componente
 export async function getServerSideProps() {
@@ -33,3 +33,5 @@ export async function getServerSideProps() {
   // Pass data to the page via props
   return { props: { name: data.name } };
 }
+
+export default Blog;
