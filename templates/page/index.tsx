@@ -1,6 +1,8 @@
+import { NextPage } from "next";
+
 interface MyProps {}
 const defaultProps: MyProps = {};
-const TemplateName = (props: MyProps) => {
+const TemplateName : NextPage = (props: MyProps) => {
   props = { ...defaultProps, ...props };
   const {} = props;
   return (

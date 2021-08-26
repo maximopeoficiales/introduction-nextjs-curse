@@ -1,9 +1,33 @@
 import type { NextPage } from "next";
 import Head from "next/head";
-import styles from "../styles/Home.module.css";
 import Link from "next/link";
+import AppLayout from "../components/AppLayout/AppLayout";
+import { colors } from "../styles/theme";
+import Button from "../components/Button/Button";
+import GithubIcon from "../components/Icons/GithubIcon/GithubIcon";
+import { loginWithGithub, onAuthStateChanged } from "../firebase/client";
+import { useEffect, useState } from "react";
+import { UserGithub } from "../firebase/entitys/UserGithub";
+// import { onAuthStateChanged } from "firebase/auth";
 
 const Home: NextPage = () => {
+  const [userGithub, setUserGithub] = useState<UserGithub>();
+  
+  // al cargar la pagina verifica que se ha logueado
+  useEffect(() => {
+    onAuthStateChanged(setUserGithub);
+  }, []);
+
+  const handlerClickLogin = async () => {
+    try {
+      let user = await loginWithGithub();
+      setUserGithub(user);
+      console.log(user);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return (
     <div>
       <Head>
@@ -12,16 +36,50 @@ const Home: NextPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <main>
-        <h1>
-          Welcome to <a href="https://nextjs.org">Next.js MaximoProg!</a>
-        </h1>
-      </main>
-      <div className={styles.content}>
-        <div className={styles.uncles}>
-          <Link href="/Blog">My blog</Link>
-        </div>
-      </div>
+      <AppLayout>
+        <section>
+          <img src="/vercel.svg" alt="logo" />
+          <h1>Devter</h1>
+          <h2>
+            Talk about development <br /> with developers
+          </h2>
+
+          {userGithub === undefined && (
+            <Button onClick={handlerClickLogin}>
+              <GithubIcon fill={"#fff"} width={24} height={24} />
+              Login with Github
+            </Button>
+          )}
+
+          {userGithub && userGithub.email && (
+            <div>
+              <img src={userGithub.avatar} alt="" />
+            </div>
+          )}
+        </section>
+      </AppLayout>
+
+      <style jsx>{`
+        img {
+          width: 120px;
+        }
+        section {
+          display: grid;
+          height: 100%;
+          place-content: center;
+          place-items: center;
+        }
+        h1 {
+          color: ${colors.secondary};
+          font-weight: 800;
+          margin-bottom: 16px;
+        }
+        h2 {
+          color: ${colors.primary};
+          font-size: 21px;
+          margin: 0;
+        }
+      `}</style>
     </div>
   );
 };
